@@ -9,17 +9,21 @@ public class CharaController : MonoBehaviour {
 
 	private float turnForce = 400.0f;
 
+	private Animator animator;
+
 	// Use this for initialization
 	void Start () {
 
 		this.rigid2D = GetComponent<Rigidbody2D> ();
+
+		this.animator = GetComponent<Animator> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetMouseButtonDown (0)) {
 
-			GetComponent<Animator> ().SetTrigger ("jumpTrigger");
+			animator.SetTrigger ("attackTrigger");
 		}
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
@@ -27,14 +31,20 @@ public class CharaController : MonoBehaviour {
 			rigid2D.AddForce (transform.up * 400);
 		}
 
-		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+		if (Input.GetKey ("right")) {
+			rigid2D.velocity = new Vector2 (1.0f, 0);
+			animator.SetBool ("walkR", true);
+		} else {
+			animator.SetBool ("walkR", false);
+		}
 
-			rigid2D.AddForce (new Vector2(-200, 0));
-		
-		} else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+		if (Input.GetKey ("left")) {
+			rigid2D.velocity = new Vector2 (-1.0f, 0);
+			animator.SetBool ("walkL", true);
+		} else {
+			animator.SetBool ("walkL", false);
+		}
 
-			rigid2D.AddForce (new Vector2(200, 0));
-				}
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
@@ -42,6 +52,11 @@ public class CharaController : MonoBehaviour {
 		if (col.gameObject.tag == "Bullet") {
 
 			SceneManager.LoadScene ("GameoverScene");
+		}
+
+		if (col.gameObject.tag == "Goal") {
+
+			SceneManager.LoadScene ("GoalScene");
 		}
 	}
 }
