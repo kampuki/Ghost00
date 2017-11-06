@@ -11,6 +11,8 @@ public class CharaController : MonoBehaviour {
 
 	private Animator animator;
 
+	public GameObject attackArea;
+
 	// Use this for initialization
 	void Start () {
 
@@ -23,6 +25,8 @@ public class CharaController : MonoBehaviour {
 	void Update () {
 		if (Input.GetMouseButtonDown (0)) {
 
+			Instantiate (attackArea, transform.position, transform.rotation);
+
 			animator.SetTrigger ("attackTrigger");
 		}
 
@@ -32,14 +36,20 @@ public class CharaController : MonoBehaviour {
 		}
 
 		if (Input.GetKey ("right")) {
-			rigid2D.velocity = new Vector2 (1.0f, 0);
-			animator.SetBool ("walkR", true);
+			rigid2D.velocity = new Vector2 (3.0f, 0);
+
+			if(transform.localScale.x < 0) 
+				AdjustScale ();
+				animator.SetBool ("walkR", true);
+
 		} else {
 			animator.SetBool ("walkR", false);
 		}
 
 		if (Input.GetKey ("left")) {
-			rigid2D.velocity = new Vector2 (-1.0f, 0);
+			rigid2D.velocity = new Vector2 (-3.0f, 0);
+				if(transform.localScale.x > 0) 
+					AdjustScale ();
 			animator.SetBool ("walkL", true);
 		} else {
 			animator.SetBool ("walkL", false);
@@ -53,10 +63,18 @@ public class CharaController : MonoBehaviour {
 
 			SceneManager.LoadScene ("GameoverScene");
 		}
+	}
 
+	void OnTriggerEnter2D(Collider2D col) {
+		
 		if (col.gameObject.tag == "Goal") {
 
 			SceneManager.LoadScene ("GoalScene");
 		}
+	}
+
+	void AdjustScale () {
+
+		transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
 	}
 }
