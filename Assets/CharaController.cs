@@ -23,11 +23,8 @@ public class CharaController : MonoBehaviour {
 
 	private bool isRButtonDown = false;
 
-	private bool isLAttackButtonDown = false;
 
-	private bool isRAttackButtonDown = false;
 
-	private bool isJumpButtonDown = false;
 
 	// Use this for initialization
 	void Start () {
@@ -41,7 +38,7 @@ public class CharaController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey(KeyCode.RightCommand) || this.isRAttackButtonDown) {
+		if (Input.GetKey(KeyCode.RightCommand)) {
 
 			Instantiate (attackArea, transform.position, transform.rotation);
 
@@ -51,7 +48,7 @@ public class CharaController : MonoBehaviour {
 			audioSorce.PlayOneShot (attackSound);
 		}
 
-		if (Input.GetKey (KeyCode.LeftCommand) || this.isLAttackButtonDown) {
+		if (Input.GetKey (KeyCode.LeftCommand)) {
 
 			Instantiate (attackAreaL, transform.position, transform.rotation);
 
@@ -61,13 +58,13 @@ public class CharaController : MonoBehaviour {
 			audioSorce.PlayOneShot (attackSound);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space) || this.isJumpButtonDown) {
+		if (Input.GetKeyDown(KeyCode.Space)) {
 
 			rigid2D.AddForce (transform.up * 400);
 		}
 
 		if (Input.GetKey ("right") || this.isRButtonDown) {
-			rigid2D.velocity = new Vector2 (3.0f, 0);
+			rigid2D.velocity = new Vector2 (5.0f, 0);
 
 			if(transform.localScale.x < 0) 
 				AdjustScale ();
@@ -78,7 +75,7 @@ public class CharaController : MonoBehaviour {
 		}
 
 		if (Input.GetKey ("left") || this.isLButtonDown) {
-			rigid2D.velocity = new Vector2 (-3.0f, 0);
+			rigid2D.velocity = new Vector2 (-5.0f, 0);
 				if(transform.localScale.x > 0) 
 					AdjustScale ();
 			animator.SetBool ("walkL", true);
@@ -90,7 +87,7 @@ public class CharaController : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D col) {
 
-		if (col.gameObject.tag == "Bullet") {
+		if (col.gameObject.tag == "Bullet" || col.gameObject.tag == "FireGround") {
 
 			SceneManager.LoadScene ("GameoverScene");
 		}
@@ -129,33 +126,33 @@ public class CharaController : MonoBehaviour {
 		this.isLButtonDown = false;
 	}
 
-	public void GetMyRightAttackButtonDown () {
+	public void GetMyRightAttackButtonClick () {
 
-		this.isRAttackButtonDown = true;
+		Instantiate (attackArea, transform.position, transform.rotation);
+
+		if (transform.localScale.x < 0)
+			AdjustScale ();
+		animator.SetTrigger ("attackTrigger");
+		audioSorce.PlayOneShot (attackSound);
 	}
 
-	public void GetMyRightAttackButtonUp () {
 
-		this.isRAttackButtonDown = false;
+
+	public void GetMyLeftAttackButtonClick () {
+
+		Instantiate (attackAreaL, transform.position, transform.rotation);
+
+		if (transform.localScale.x > 0)
+			AdjustScale ();
+		animator.SetTrigger ("attackTriggerL");
+		audioSorce.PlayOneShot (attackSound);
 	}
 
-	public void GetMyLeftAttackButtonDown () {
 
-		this.isLAttackButtonDown = true;
+		
+	public void GetJumpButtonClick () {
+
+		rigid2D.AddForce (transform.up * 400);
 	}
 
-	public void GetLeftAttackButtonUp () {
-
-		this.isLAttackButtonDown = false;
-	}
-
-	public void GetJumpButtonDown () {
-
-		this.isJumpButtonDown = true;
-	}
-
-	public void GetJumpButtonUp () {
-
-		this.isJumpButtonDown = false;
-	}
 }
